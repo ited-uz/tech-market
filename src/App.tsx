@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { themes, type ThemeId, type Theme } from './themes';
 
 // ============ TYPES ============
@@ -65,23 +65,35 @@ export default function App() {
       background: theme.bgPrimary, 
       color: theme.textPrimary, 
       minHeight: '100vh',
-      transition: 'background 0.3s ease'
+      transition: 'background 0.5s ease'
     }}>
+      {/* Ambient Background */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: `radial-gradient(circle at 20% 20%, ${theme.accent}08 0%, transparent 50%), radial-gradient(circle at 80% 80%, ${theme.accent}05 0%, transparent 50%)`,
+        pointerEvents: 'none',
+        zIndex: 0
+      }} />
+
       {/* Header */}
-      <header className="text-center pt-16 pb-10 px-4">
+      <header className="text-center pt-20 pb-12 px-4 relative" style={{ zIndex: 1 }}>
         <div 
-          className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
+          className="inline-flex items-center gap-2 mb-8 px-5 py-2.5 rounded-full glass"
           style={{ 
-            background: theme.surface, 
-            border: `1px solid ${theme.border}`,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            animation: 'fadeInDown 0.6s ease'
           }}
         >
           <div 
             className="w-2 h-2 rounded-full"
             style={{ 
               background: theme.success,
-              animation: 'pulse 2s infinite'
+              animation: 'pulse 2s infinite',
+              boxShadow: `0 0 8px ${theme.success}`
             }}
           />
           <span style={{ color: theme.textSecondary, fontSize: '13px', fontWeight: 500 }}>
@@ -89,8 +101,15 @@ export default function App() {
           </span>
         </div>
         
-        <h1 className="mb-4">
-          <span className="gradient-text" style={{ background: theme.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <h1 className="mb-4" style={{ animation: 'fadeInUp 0.8s ease' }}>
+          <span 
+            className="gradient-text"
+            style={{ 
+              background: theme.gradient, 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
             TechSeller
           </span>
           <span style={{ color: theme.textPrimary }}> AI</span>
@@ -101,26 +120,31 @@ export default function App() {
           fontSize: '16px', 
           maxWidth: '500px', 
           margin: '0 auto',
-          lineHeight: 1.6
+          lineHeight: 1.6,
+          animation: 'fadeInUp 1s ease'
         }}>
           O'zbekiston bozorlari uchun birinchi to'liq AI savdo tizimi
         </p>
       </header>
 
       {/* Controls */}
-      <div className="flex flex-col items-center gap-4 mb-16 px-4">
+      <div className="flex flex-col items-center gap-4 mb-20 px-4 relative" style={{ zIndex: 1 }}>
         {/* Mode Switch */}
         <div 
           className="card p-1.5 flex gap-1.5"
-          style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+          style={{ 
+            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+            animation: 'fadeInUp 0.8s ease 0.2s both'
+          }}
         >
           <button
             onClick={() => setMode('miniapp')}
-            className="px-6 py-3 rounded-xl text-sm font-semibold"
+            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all"
             style={mode === 'miniapp' ? { 
               background: theme.gradient, 
               color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + theme.accent + '30',
+              transform: 'scale(1.02)'
             } : { 
               color: theme.textMuted,
               background: 'transparent'
@@ -130,11 +154,12 @@ export default function App() {
           </button>
           <button
             onClick={() => setMode('admin')}
-            className="px-6 py-3 rounded-xl text-sm font-semibold"
+            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all"
             style={mode === 'admin' ? { 
               background: theme.gradient, 
               color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + theme.accent + '30',
+              transform: 'scale(1.02)'
             } : { 
               color: theme.textMuted,
               background: 'transparent'
@@ -145,16 +170,17 @@ export default function App() {
         </div>
 
         {/* Theme Switch */}
-        <div className="flex gap-2">
+        <div className="flex gap-2" style={{ animation: 'fadeInUp 0.8s ease 0.3s both' }}>
           {(Object.keys(themes) as ThemeId[]).map(tid => (
             <button
               key={tid}
               onClick={() => setThemeId(tid)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold"
+              className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
               style={themeId === tid ? { 
                 background: theme.gradient, 
                 color: '#fff',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                transform: 'scale(1.05)'
               } : { 
                 background: theme.surface, 
                 color: theme.textMuted, 
@@ -168,7 +194,7 @@ export default function App() {
       </div>
 
       {/* Content */}
-      <div className="pb-16">
+      <div className="pb-20 relative" style={{ zIndex: 1 }}>
         {mode === 'miniapp' ? (
           <>
             <MiniAppView activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} />
@@ -181,8 +207,8 @@ export default function App() {
 
       {/* Footer */}
       <footer 
-        className="text-center py-12 border-t"
-        style={{ borderColor: theme.border }}
+        className="text-center py-16 border-t relative"
+        style={{ borderColor: theme.border, zIndex: 1 }}
       >
         <p style={{ color: theme.textMuted, fontSize: '13px' }}>
           TechSeller AI © 2026 · O'zbekiston bozorlari uchun maxsus
@@ -202,7 +228,7 @@ function MiniAppView({ activeTab, setActiveTab, theme }: {
   theme: Theme 
 }) {
   return (
-    <div className="flex justify-center px-4 mb-16">
+    <div className="flex justify-center px-4 mb-20">
       <div className="phone-frame">
         <div className="phone-notch" />
         <div 
@@ -231,14 +257,18 @@ function VitrinaTab({ theme }: { theme: Theme }) {
   }, [filter]);
 
   return (
-    <div className="px-5 animate-slide-up">
+    <div className="px-5 animate-fade-in-up">
       <div className="flex items-center justify-between mb-6">
         <h2 style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}>
           Vitrina
         </h2>
         <div 
           className="badge badge-primary"
-          style={{ background: `${theme.accent}20`, color: theme.accent }}
+          style={{ 
+            background: `${theme.accent}20`, 
+            color: theme.accent,
+            border: `1px solid ${theme.accent}40`
+          }}
         >
           1$ = 12,850
         </div>
@@ -255,10 +285,11 @@ function VitrinaTab({ theme }: { theme: Theme }) {
           <button
             key={f.id}
             onClick={() => setFilter(f.id)}
-            className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap"
+            className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all"
             style={filter === f.id ? {
               background: theme.gradient,
-              color: '#fff'
+              color: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             } : {
               background: theme.surface,
               color: theme.textSecondary,
@@ -277,8 +308,8 @@ function VitrinaTab({ theme }: { theme: Theme }) {
             key={p.id}
             className="card p-4 relative overflow-hidden"
             style={{ 
-              animation: `slideUp 0.4s ease ${i * 0.05}s both`,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              animation: `fadeInUp 0.4s ease ${i * 0.05}s both`,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             }}
           >
             {p.tag && (
@@ -287,6 +318,7 @@ function VitrinaTab({ theme }: { theme: Theme }) {
                 style={{ 
                   background: `${theme.accent}20`, 
                   color: theme.accent,
+                  border: `1px solid ${theme.accent}40`,
                   fontSize: '10px'
                 }}
               >
@@ -378,7 +410,7 @@ function ChatTab({ theme }: { theme: Theme }) {
     <div className="flex flex-col h-full animate-fade-in">
       {/* Header */}
       <div 
-        className="px-5 py-4 border-b"
+        className="px-5 py-4 border-b glass"
         style={{ borderColor: theme.border }}
       >
         <div className="flex items-center gap-3">
@@ -387,7 +419,7 @@ function ChatTab({ theme }: { theme: Theme }) {
             style={{ 
               background: theme.gradient, 
               color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + theme.accent + '30'
             }}
           >
             AI
@@ -407,7 +439,8 @@ function ChatTab({ theme }: { theme: Theme }) {
                 className="w-1.5 h-1.5 rounded-full"
                 style={{ 
                   background: theme.success,
-                  animation: 'pulse 2s infinite'
+                  animation: 'pulse 2s infinite',
+                  boxShadow: `0 0 6px ${theme.success}`
                 }}
               />
               Onlayn · 0.8s
@@ -426,7 +459,7 @@ function ChatTab({ theme }: { theme: Theme }) {
           <div 
             key={msg.id} 
             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            style={{ animation: 'slideUp 0.3s ease' }}
+            style={{ animation: 'fadeInUp 0.3s ease' }}
           >
             <div
               className="px-4 py-3 rounded-2xl text-sm max-w-[80%]"
@@ -434,12 +467,14 @@ function ChatTab({ theme }: { theme: Theme }) {
                 ? { 
                     background: theme.gradient, 
                     color: '#fff',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    borderRadius: '18px 18px 4px 18px'
                   }
                 : { 
                     background: theme.surface, 
                     color: theme.textPrimary,
-                    border: `1px solid ${theme.border}`
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: '18px 18px 18px 4px'
                   }
               }
             >
@@ -449,12 +484,13 @@ function ChatTab({ theme }: { theme: Theme }) {
         ))}
         
         {isTyping && (
-          <div className="flex justify-start">
+          <div className="flex justify-start" style={{ animation: 'fadeIn 0.3s ease' }}>
             <div 
               className="px-4 py-3 rounded-2xl flex gap-1"
               style={{ 
                 background: theme.surface,
-                border: `1px solid ${theme.border}`
+                border: `1px solid ${theme.border}`,
+                borderRadius: '18px 18px 18px 4px'
               }}
             >
               {[0, 0.2, 0.4].map((delay, i) => (
@@ -474,7 +510,7 @@ function ChatTab({ theme }: { theme: Theme }) {
 
       {/* Input */}
       <div 
-        className="px-5 py-4 border-t"
+        className="px-5 py-4 border-t glass"
         style={{ borderColor: theme.border }}
       >
         <div className="flex gap-2 mb-3 overflow-x-auto">
@@ -482,7 +518,7 @@ function ChatTab({ theme }: { theme: Theme }) {
             <button
               key={q}
               onClick={() => setInput(q)}
-              className="text-xs px-3 py-1.5 rounded-full whitespace-nowrap font-medium"
+              className="text-xs px-3 py-1.5 rounded-full whitespace-nowrap font-medium transition-all"
               style={{ 
                 background: theme.surface, 
                 color: theme.textSecondary, 
@@ -502,7 +538,7 @@ function ChatTab({ theme }: { theme: Theme }) {
             placeholder="Xabar yozing..."
             className="input flex-1"
           />
-          <button onClick={send} className="btn-primary px-5">
+          <button onClick={send} className="btn btn-primary px-5">
             ➤
           </button>
         </div>
@@ -521,7 +557,7 @@ function TradeInTab({ theme }: { theme: Theme }) {
   };
 
   return (
-    <div className="px-5 animate-slide-up">
+    <div className="px-5 animate-fade-in-up">
       <h2 
         className="mb-2"
         style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
@@ -539,9 +575,12 @@ function TradeInTab({ theme }: { theme: Theme }) {
         <div
           onClick={startAnalysis}
           className="card p-8 text-center cursor-pointer"
-          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+          style={{ 
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            border: `2px dashed ${theme.border}`
+          }}
         >
-          <div className="text-5xl mb-4">📸</div>
+          <div className="text-5xl mb-4 animate-float">📸</div>
           <div 
             className="text-sm font-semibold mb-1"
             style={{ color: theme.textPrimary }}
@@ -566,7 +605,7 @@ function TradeInTab({ theme }: { theme: Theme }) {
       {state === 'loading' && (
         <div 
           className="card p-8 text-center"
-          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
         >
           <div 
             className="w-12 h-12 mx-auto mb-4 rounded-full border-4 border-t-transparent animate-spin"
@@ -585,7 +624,7 @@ function TradeInTab({ theme }: { theme: Theme }) {
         <div 
           className="card p-5"
           style={{ 
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
             animation: 'scaleIn 0.3s ease'
           }}
         >
@@ -628,7 +667,7 @@ function TradeInTab({ theme }: { theme: Theme }) {
               </span>
             </div>
           </div>
-          <button className="btn-primary w-full py-3 mt-4 text-sm">
+          <button className="btn btn-primary w-full py-3 mt-4 text-sm">
             💬 AI bilan gaplashish
           </button>
         </div>
@@ -651,7 +690,7 @@ function QRTab({ theme }: { theme: Theme }) {
   const s = String(time % 60).padStart(2, '0');
 
   return (
-    <div className="px-5 animate-slide-up">
+    <div className="px-5 animate-fade-in-up">
       <h2 
         className="mb-2"
         style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
@@ -667,7 +706,9 @@ function QRTab({ theme }: { theme: Theme }) {
 
       <div 
         className="card p-6 text-center"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ 
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 40px ' + theme.accent + '15'
+        }}
       >
         <div 
           className="text-4xl font-bold mb-2 tabular-nums"
@@ -734,7 +775,7 @@ function QRTab({ theme }: { theme: Theme }) {
         className="card p-4 mt-4"
         style={{ 
           borderColor: `${theme.warning}40`,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
         }}
       >
         <div className="flex items-start gap-2">
@@ -765,7 +806,7 @@ function LoyaltyTab({ theme }: { theme: Theme }) {
   const progress = (points / 2000) * 100;
 
   return (
-    <div className="px-5 animate-slide-up">
+    <div className="px-5 animate-fade-in-up">
       <h2 
         className="mb-6"
         style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
@@ -775,7 +816,9 @@ function LoyaltyTab({ theme }: { theme: Theme }) {
 
       <div 
         className="card p-6 mb-4"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ 
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 40px ' + theme.accent + '10'
+        }}
       >
         <div 
           className="text-xs mb-2"
@@ -798,7 +841,8 @@ function LoyaltyTab({ theme }: { theme: Theme }) {
             className="h-full rounded-full transition-all duration-1000"
             style={{ 
               width: `${progress}%`, 
-              background: theme.gradient 
+              background: theme.gradient,
+              boxShadow: `0 0 10px ${theme.accent}50`
             }}
           />
         </div>
@@ -821,8 +865,8 @@ function LoyaltyTab({ theme }: { theme: Theme }) {
             key={i} 
             className="card p-4 text-center"
             style={{ 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              animation: `slideUp 0.4s ease ${i * 0.05}s both`
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
             <div className="text-2xl mb-2">{r.emoji}</div>
@@ -861,18 +905,17 @@ function BottomNav({ activeTab, setActiveTab, theme }: {
 
   return (
     <div 
-      className="absolute bottom-0 left-0 right-0 flex justify-around py-3 pb-6 border-t"
+      className="absolute bottom-0 left-0 right-0 flex justify-around py-3 pb-6 border-t glass"
       style={{ 
-        background: theme.bgPrimary,
         borderColor: theme.border,
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.2)'
+        boxShadow: '0 -2px 8px rgba(0,0,0,0.3)'
       }}
     >
       {tabs.map(tab => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
-          className="flex flex-col items-center gap-1 px-3 py-1"
+          className="flex flex-col items-center gap-1 px-3 py-1 transition-all"
           style={{ color: activeTab === tab.id ? theme.accent : theme.textMuted }}
         >
           <div className="text-lg">{tab.icon}</div>
@@ -895,7 +938,10 @@ function AdminView({ adminTab, setAdminTab, theme }: {
     >
       <div 
         className="card p-6 mb-6"
-        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+        style={{ 
+          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+          animation: 'fadeInUp 0.6s ease'
+        }}
       >
         <div className="flex items-center justify-between">
           <div>
@@ -934,11 +980,11 @@ function AdminView({ adminTab, setAdminTab, theme }: {
           <button
             key={tab}
             onClick={() => setAdminTab(tab)}
-            className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap"
+            className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all"
             style={adminTab === tab ? { 
               background: theme.gradient, 
               color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             } : { 
               background: theme.surface, 
               color: theme.textMuted, 
@@ -968,7 +1014,7 @@ function AdminView({ adminTab, setAdminTab, theme }: {
 // ============ DASHBOARD TAB ============
 function DashboardTab({ theme }: { theme: Theme }) {
   return (
-    <div className="animate-slide-up">
+    <div className="animate-fade-in-up">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {[
           { label: 'Foyda', value: '$780', change: '↑ 24%', color: theme.accent },
@@ -980,8 +1026,8 @@ function DashboardTab({ theme }: { theme: Theme }) {
             key={i} 
             className="card p-4"
             style={{ 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              animation: `slideUp 0.4s ease ${i * 0.05}s both`
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
             <div 
@@ -1018,7 +1064,7 @@ function DashboardTab({ theme }: { theme: Theme }) {
 
       <div 
         className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
       >
         <h3 
           className="text-sm font-semibold mb-4"
@@ -1075,10 +1121,10 @@ function CRMTab({ theme }: { theme: Theme }) {
   };
 
   return (
-    <div className="animate-slide-up">
+    <div className="animate-fade-in-up">
       <div 
         className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
       >
         <div className="flex items-center justify-between mb-4">
           <h3 
@@ -1088,10 +1134,11 @@ function CRMTab({ theme }: { theme: Theme }) {
             Mijozlar bazasi
           </h3>
           <span 
-            className="badge"
+            className="badge badge-primary"
             style={{ 
               background: `${theme.accent}20`, 
-              color: theme.accent 
+              color: theme.accent,
+              border: `1px solid ${theme.accent}40`
             }}
           >
             {customers.length} mijoz
@@ -1104,7 +1151,7 @@ function CRMTab({ theme }: { theme: Theme }) {
               className="flex items-center gap-3 p-3 rounded-xl"
               style={{ 
                 background: theme.surfaceHover,
-                animation: `slideUp 0.4s ease ${i * 0.05}s both`
+                animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
               }}
             >
               <div 
@@ -1160,10 +1207,10 @@ function VoiceTab({ theme }: { theme: Theme }) {
   const [state, setState] = useState<'idle' | 'recording' | 'done'>('idle');
 
   return (
-    <div className="animate-slide-up">
+    <div className="animate-fade-in-up">
       <div 
         className="card p-6 text-center"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
       >
         <h3 
           className="text-sm font-semibold mb-2"
@@ -1183,11 +1230,11 @@ function VoiceTab({ theme }: { theme: Theme }) {
             setState('recording'); 
             setTimeout(() => setState('done'), 2000); 
           }}
-          className="w-16 h-16 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"
+          className="w-16 h-16 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 transition-all"
           style={{ 
             background: state === 'recording' ? theme.danger : theme.gradient,
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            boxShadow: '0 4px 12px rgba(0,0,0,0.4), 0 0 20px ' + (state === 'recording' ? theme.danger : theme.accent) + '40'
           }}
         >
           {state === 'recording' ? '🔴' : '🎤'}
@@ -1238,10 +1285,10 @@ function VoiceTab({ theme }: { theme: Theme }) {
 // ============ INVENTORY TAB ============
 function InventoryTab({ theme }: { theme: Theme }) {
   return (
-    <div className="animate-slide-up">
+    <div className="animate-fade-in-up">
       <div 
         className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
       >
         <h3 
           className="text-sm font-semibold mb-4"
@@ -1300,10 +1347,10 @@ function AnalyticsTab({ theme }: { theme: Theme }) {
   const max = Math.max(...weeklyData.map(d => d.value));
 
   return (
-    <div className="animate-slide-up">
+    <div className="animate-fade-in-up">
       <div 
         className="card p-5 mb-4"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
       >
         <h3 
           className="text-sm font-semibold mb-4"
@@ -1328,7 +1375,8 @@ function AnalyticsTab({ theme }: { theme: Theme }) {
                 style={{ 
                   height: `${(d.value / max) * 100}%`, 
                   background: theme.gradient,
-                  animation: `slideUp 0.4s ease ${i * 0.05}s both`
+                  animation: `fadeInUp 0.4s ease ${i * 0.05}s both`,
+                  boxShadow: `0 0 10px ${theme.accent}30`
                 }}
               />
               <div 
@@ -1353,8 +1401,8 @@ function AnalyticsTab({ theme }: { theme: Theme }) {
             key={i} 
             className="card p-4 text-center"
             style={{ 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              animation: `slideUp 0.4s ease ${i * 0.05}s both`
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
             <div 
@@ -1381,10 +1429,10 @@ function BroadcastTab({ theme }: { theme: Theme }) {
   const [sent, setSent] = useState(false);
 
   return (
-    <div className="animate-slide-up">
+    <div className="animate-fade-in-up">
       <div 
         className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
       >
         <h3 
           className="text-sm font-semibold mb-4"
@@ -1411,10 +1459,11 @@ function BroadcastTab({ theme }: { theme: Theme }) {
                 {ch.name}
               </span>
               <span 
-                className="badge"
+                className="badge badge-primary"
                 style={{ 
                   background: `${theme.accent}20`, 
-                  color: theme.accent 
+                  color: theme.accent,
+                  border: `1px solid ${theme.accent}40`
                 }}
               >
                 {ch.count}
@@ -1425,7 +1474,7 @@ function BroadcastTab({ theme }: { theme: Theme }) {
 
         <button
           onClick={() => setSent(true)}
-          className="btn-primary w-full py-3 text-sm"
+          className="btn btn-primary w-full py-3 text-sm"
         >
           {sent ? '✅ Yuborildi!' : '📤 Yuborish'}
         </button>
@@ -1449,10 +1498,10 @@ function FeaturesSection({ theme }: { theme: Theme }) {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-6 py-16">
-      <div className="text-center mb-12">
+    <div className="max-w-6xl mx-auto px-4 md:px-6 py-20">
+      <div className="text-center mb-16">
         <h2 
-          className="mb-3"
+          className="mb-4"
           style={{ color: theme.textPrimary, fontSize: '32px', fontWeight: 700 }}
         >
           Nima uchun{' '}
@@ -1481,8 +1530,8 @@ function FeaturesSection({ theme }: { theme: Theme }) {
             key={f.title}
             className="card p-5"
             style={{ 
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              animation: `slideUp 0.4s ease ${i * 0.05}s both`
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
             <div className="flex items-start justify-between mb-3">
