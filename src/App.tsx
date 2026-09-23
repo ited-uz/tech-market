@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { themes, type ThemeId, type Theme } from './themes';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 // ============ TYPES ============
 type TabType = 'vitrina' | 'chat' | 'tradein' | 'qr' | 'loyalty';
@@ -52,71 +51,86 @@ const weeklyData = [
   { day: 'Yak', value: 2400 },
 ];
 
+// ============ COLOR CONSTANTS (Luxury Psychology) ============
+const colors = {
+  bg: '#000000',
+  bgSecondary: '#0a0a0a',
+  bgTertiary: '#111111',
+  accent: '#d4af37',
+  accentLight: '#f5d67b',
+  text: '#ffffff',
+  textSecondary: '#a1a1a1',
+  textMuted: '#525252',
+  border: '#1a1a1a',
+  borderHover: '#262626',
+  success: '#22c55e',
+  warning: '#eab308',
+  danger: '#ef4444',
+};
+
 // ============ MAIN APP ============
 export default function App() {
   const [mode, setMode] = useState<ModeType>('miniapp');
   const [activeTab, setActiveTab] = useState<TabType>('vitrina');
   const [adminTab, setAdminTab] = useState<AdminTabType>('dashboard');
-  const [themeId, setThemeId] = useState<ThemeId>('midnight');
-  const theme = themes[themeId];
 
   return (
     <div style={{ 
-      background: theme.bgPrimary, 
-      color: theme.textPrimary, 
+      background: colors.bg, 
+      color: colors.text, 
       minHeight: '100vh',
-      transition: 'background 0.5s ease'
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
     }}>
-      {/* Ambient Background */}
+      {/* Ambient Background (Subtle gold glow) */}
       <div style={{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: `radial-gradient(circle at 20% 20%, ${theme.accent}08 0%, transparent 50%), radial-gradient(circle at 80% 80%, ${theme.accent}05 0%, transparent 50%)`,
+        background: `radial-gradient(circle at 20% 20%, ${colors.accent}08 0%, transparent 50%), radial-gradient(circle at 80% 80%, ${colors.accent}05 0%, transparent 50%)`,
         pointerEvents: 'none',
         zIndex: 0
       }} />
 
-      {/* Header */}
-      <header className="text-center pt-20 pb-12 px-4 relative" style={{ zIndex: 1 }}>
+      {/* Header - Macro whitespace (80px) */}
+      <header style={{ paddingTop: '80px', paddingBottom: '64px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
         <div 
-          className="inline-flex items-center gap-2 mb-8 px-5 py-2.5 rounded-full glass"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass"
           style={{ 
+            marginBottom: '32px',
             boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
             animation: 'fadeInDown 0.6s ease'
           }}
         >
           <div 
-            className="w-2 h-2 rounded-full"
-            style={{ 
-              background: theme.success,
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: colors.success,
               animation: 'pulse 2s infinite',
-              boxShadow: `0 0 8px ${theme.success}`
+              boxShadow: `0 0 8px ${colors.success}`
             }}
           />
-          <span style={{ color: theme.textSecondary, fontSize: '13px', fontWeight: 500 }}>
+          <span style={{ color: colors.textSecondary, fontSize: '13px', fontWeight: 500 }}>
             AI Sotuvchi faol
           </span>
         </div>
         
-        <h1 className="mb-4" style={{ animation: 'fadeInUp 0.8s ease' }}>
-          <span 
-            className="gradient-text"
-            style={{ 
-              background: theme.gradient, 
-              WebkitBackgroundClip: 'text', 
-              WebkitTextFillColor: 'transparent'
-            }}
-          >
-            TechSeller
-          </span>
-          <span style={{ color: theme.textPrimary }}> AI</span>
+        <h1 style={{ 
+          fontSize: '48px', 
+          fontWeight: 700, 
+          letterSpacing: '-0.02em',
+          marginBottom: '16px',
+          animation: 'fadeInUp 0.8s ease'
+        }}>
+          <span className="gradient-text">TechSeller</span>
+          <span> AI</span>
         </h1>
         
         <p style={{ 
-          color: theme.textMuted, 
+          color: colors.textMuted, 
           fontSize: '16px', 
           maxWidth: '500px', 
           margin: '0 auto',
@@ -127,93 +141,85 @@ export default function App() {
         </p>
       </header>
 
-      {/* Controls */}
-      <div className="flex flex-col items-center gap-4 mb-20 px-4 relative" style={{ zIndex: 1 }}>
+      {/* Controls - Macro whitespace */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '80px', position: 'relative', zIndex: 1 }}>
         {/* Mode Switch */}
         <div 
-          className="card p-1.5 flex gap-1.5"
+          className="card"
           style={{ 
+            padding: '6px',
+            display: 'flex',
+            gap: '6px',
             boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
             animation: 'fadeInUp 0.8s ease 0.2s both'
           }}
         >
           <button
             onClick={() => setMode('miniapp')}
-            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all"
-            style={mode === 'miniapp' ? { 
-              background: theme.gradient, 
-              color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + theme.accent + '30',
-              transform: 'scale(1.02)'
-            } : { 
-              color: theme.textMuted,
-              background: 'transparent'
+            style={{
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: 600,
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              background: mode === 'miniapp' ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})` : 'transparent',
+              color: mode === 'miniapp' ? '#000' : colors.textMuted,
+              boxShadow: mode === 'miniapp' ? `0 2px 8px rgba(0,0,0,0.3), 0 0 20px ${colors.accent}30` : 'none',
+              transform: mode === 'miniapp' ? 'scale(1.02)' : 'scale(1)'
             }}
           >
             📱 Mini-App
           </button>
           <button
             onClick={() => setMode('admin')}
-            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all"
-            style={mode === 'admin' ? { 
-              background: theme.gradient, 
-              color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + theme.accent + '30',
-              transform: 'scale(1.02)'
-            } : { 
-              color: theme.textMuted,
-              background: 'transparent'
+            style={{
+              padding: '12px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: 600,
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              background: mode === 'admin' ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})` : 'transparent',
+              color: mode === 'admin' ? '#000' : colors.textMuted,
+              boxShadow: mode === 'admin' ? `0 2px 8px rgba(0,0,0,0.3), 0 0 20px ${colors.accent}30` : 'none',
+              transform: mode === 'admin' ? 'scale(1.02)' : 'scale(1)'
             }}
           >
             🏪 Admin
           </button>
         </div>
-
-        {/* Theme Switch */}
-        <div className="flex gap-2" style={{ animation: 'fadeInUp 0.8s ease 0.3s both' }}>
-          {(Object.keys(themes) as ThemeId[]).map(tid => (
-            <button
-              key={tid}
-              onClick={() => setThemeId(tid)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
-              style={themeId === tid ? { 
-                background: theme.gradient, 
-                color: '#fff',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                transform: 'scale(1.05)'
-              } : { 
-                background: theme.surface, 
-                color: theme.textMuted, 
-                border: `1px solid ${theme.border}`
-              }}
-            >
-              {themes[tid].emoji} {themes[tid].name}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Content */}
-      <div className="pb-20 relative" style={{ zIndex: 1 }}>
+      <div style={{ paddingBottom: '80px', position: 'relative', zIndex: 1 }}>
         {mode === 'miniapp' ? (
           <>
-            <MiniAppView activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} />
-            <FeaturesSection theme={theme} />
+            <MiniAppView activeTab={activeTab} setActiveTab={setActiveTab} />
+            <FeaturesSection />
           </>
         ) : (
-          <AdminView adminTab={adminTab} setAdminTab={setAdminTab} theme={theme} />
+          <AdminView adminTab={adminTab} setAdminTab={setAdminTab} />
         )}
       </div>
 
-      {/* Footer */}
+      {/* Footer - Macro whitespace */}
       <footer 
-        className="text-center py-16 border-t relative"
-        style={{ borderColor: theme.border, zIndex: 1 }}
+        style={{ 
+          textAlign: 'center', 
+          paddingTop: '64px',
+          paddingBottom: '64px',
+          borderTop: `1px solid ${colors.border}`,
+          position: 'relative',
+          zIndex: 1
+        }}
       >
-        <p style={{ color: theme.textMuted, fontSize: '13px' }}>
+        <p style={{ color: colors.textMuted, fontSize: '13px' }}>
           TechSeller AI © 2026 · O'zbekiston bozorlari uchun maxsus
         </p>
-        <p style={{ color: theme.textMuted, fontSize: '11px', marginTop: '8px', opacity: 0.6 }}>
+        <p style={{ color: colors.textMuted, fontSize: '11px', marginTop: '8px', opacity: 0.6 }}>
           Powered by GPT-4 Vision · Whisper · Telegram · Payme · Click
         </p>
       </footer>
@@ -222,33 +228,29 @@ export default function App() {
 }
 
 // ============ MINI APP VIEW ============
-function MiniAppView({ activeTab, setActiveTab, theme }: { 
+function MiniAppView({ activeTab, setActiveTab }: { 
   activeTab: TabType; 
-  setActiveTab: (t: TabType) => void; 
-  theme: Theme 
+  setActiveTab: (t: TabType) => void;
 }) {
   return (
-    <div className="flex justify-center px-4 mb-20">
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '0 16px', marginBottom: '80px' }}>
       <div className="phone-frame">
         <div className="phone-notch" />
-        <div 
-          className="h-full overflow-y-auto pt-12 pb-24"
-          style={{ background: theme.bgPrimary }}
-        >
-          {activeTab === 'vitrina' && <VitrinaTab theme={theme} />}
-          {activeTab === 'chat' && <ChatTab theme={theme} />}
-          {activeTab === 'tradein' && <TradeInTab theme={theme} />}
-          {activeTab === 'qr' && <QRTab theme={theme} />}
-          {activeTab === 'loyalty' && <LoyaltyTab theme={theme} />}
+        <div style={{ height: '100%', overflowY: 'auto', paddingTop: '48px', paddingBottom: '96px', background: colors.bg }}>
+          {activeTab === 'vitrina' && <VitrinaTab />}
+          {activeTab === 'chat' && <ChatTab />}
+          {activeTab === 'tradein' && <TradeInTab />}
+          {activeTab === 'qr' && <QRTab />}
+          {activeTab === 'loyalty' && <LoyaltyTab />}
         </div>
-        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} />
+        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
     </div>
   );
 }
 
 // ============ VITRINA TAB ============
-function VitrinaTab({ theme }: { theme: Theme }) {
+function VitrinaTab() {
   const [filter, setFilter] = useState('all');
   
   const filtered = useMemo(() => {
@@ -257,25 +259,25 @@ function VitrinaTab({ theme }: { theme: Theme }) {
   }, [filter]);
 
   return (
-    <div className="px-5 animate-fade-in-up">
-      <div className="flex items-center justify-between mb-6">
-        <h2 style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}>
+    <div style={{ padding: '0 20px', animation: 'fadeInUp 0.4s ease' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.01em', color: colors.text }}>
           Vitrina
         </h2>
         <div 
           className="badge badge-primary"
           style={{ 
-            background: `${theme.accent}20`, 
-            color: theme.accent,
-            border: `1px solid ${theme.accent}40`
+            background: `${colors.accent}20`, 
+            color: colors.accent,
+            border: `1px solid ${colors.accent}40`
           }}
         >
           1$ = 12,850
         </div>
       </div>
       
-      {/* Filters */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      {/* Filters - Micro whitespace */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', overflowX: 'auto', paddingBottom: '8px' }}>
         {[
           { id: 'all', label: 'Hammasi' },
           { id: 'iphone', label: 'iPhone' },
@@ -285,15 +287,18 @@ function VitrinaTab({ theme }: { theme: Theme }) {
           <button
             key={f.id}
             onClick={() => setFilter(f.id)}
-            className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all"
-            style={filter === f.id ? {
-              background: theme.gradient,
-              color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-            } : {
-              background: theme.surface,
-              color: theme.textSecondary,
-              border: `1px solid ${theme.border}`
+            style={{
+              padding: '8px 16px',
+              borderRadius: '12px',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap',
+              background: filter === f.id ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})` : colors.bgSecondary,
+              color: filter === f.id ? '#000' : colors.textSecondary,
+              boxShadow: filter === f.id ? '0 2px 8px rgba(0,0,0,0.3)' : 'none',
+              border: filter === f.id ? 'none' : `1px solid ${colors.border}`
             }}
           >
             {f.label}
@@ -301,55 +306,49 @@ function VitrinaTab({ theme }: { theme: Theme }) {
         ))}
       </div>
       
-      {/* Products Grid */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* Products Grid - Bento style */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
         {filtered.map((p, i) => (
           <div
             key={p.id}
-            className="card p-4 relative overflow-hidden"
+            className="card"
             style={{ 
+              padding: '16px',
+              position: 'relative',
+              overflow: 'hidden',
               animation: `fadeInUp 0.4s ease ${i * 0.05}s both`,
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             }}
           >
             {p.tag && (
               <div 
-                className="absolute top-3 right-3 badge"
+                className="badge"
                 style={{ 
-                  background: `${theme.accent}20`, 
-                  color: theme.accent,
-                  border: `1px solid ${theme.accent}40`,
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  background: `${colors.accent}20`, 
+                  color: colors.accent,
+                  border: `1px solid ${colors.accent}40`,
                   fontSize: '10px'
                 }}
               >
                 {p.tag}
               </div>
             )}
-            <div className="text-4xl mb-3">{p.emoji}</div>
-            <div 
-              className="text-sm font-semibold mb-1 truncate"
-              style={{ color: theme.textPrimary }}
-            >
+            <div style={{ fontSize: '40px', marginBottom: '12px' }}>{p.emoji}</div>
+            <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: colors.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {p.title}
             </div>
-            <div 
-              className="text-xs mb-3 truncate"
-              style={{ color: theme.textMuted }}
-            >
+            <div style={{ fontSize: '12px', marginBottom: '12px', color: colors.textMuted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {p.spec}
             </div>
-            <div className="flex items-center justify-between">
-              <div 
-                className="text-lg font-bold"
-                style={{ color: theme.accent }}
-              >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: colors.accent }}>
                 ${p.price}
               </div>
               {p.battery && (
-                <div 
-                  className="text-xs"
-                  style={{ color: theme.textMuted }}
-                >
+                <div style={{ fontSize: '12px', color: colors.textMuted }}>
                   🔋 {p.battery}%
                 </div>
               )}
@@ -362,7 +361,7 @@ function VitrinaTab({ theme }: { theme: Theme }) {
 }
 
 // ============ CHAT TAB ============
-function ChatTab({ theme }: { theme: Theme }) {
+function ChatTab() {
   const [messages, setMessages] = useState<Message[]>([
     { 
       id: 1, 
@@ -407,40 +406,46 @@ function ChatTab({ theme }: { theme: Theme }) {
   const quickReplies = ['iPhone 13 Pro narxi?', 'Trade-in bormi?', 'Yetkazib berish?'];
 
   return (
-    <div className="flex flex-col h-full animate-fade-in">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', animation: 'fadeIn 0.3s ease' }}>
       {/* Header */}
       <div 
-        className="px-5 py-4 border-b glass"
-        style={{ borderColor: theme.border }}
+        className="glass"
+        style={{ 
+          padding: '16px 20px',
+          borderBottom: `1px solid ${colors.border}`
+        }}
       >
-        <div className="flex items-center gap-3">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
             style={{ 
-              background: theme.gradient, 
-              color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + theme.accent + '30'
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              fontWeight: 700,
+              background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})`,
+              color: '#000',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 20px ' + colors.accent + '30'
             }}
           >
             AI
           </div>
           <div>
-            <div 
-              className="text-sm font-semibold"
-              style={{ color: theme.textPrimary }}
-            >
+            <div style={{ fontSize: '14px', fontWeight: 600, color: colors.text }}>
               Sardor (AI)
             </div>
-            <div 
-              className="text-xs flex items-center gap-1"
-              style={{ color: theme.success }}
-            >
+            <div style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', color: colors.success }}>
               <span 
-                className="w-1.5 h-1.5 rounded-full"
                 style={{ 
-                  background: theme.success,
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: colors.success,
                   animation: 'pulse 2s infinite',
-                  boxShadow: `0 0 6px ${theme.success}`
+                  boxShadow: `0 0 6px ${colors.success}`
                 }}
               />
               Onlayn · 0.8s
@@ -452,31 +457,36 @@ function ChatTab({ theme }: { theme: Theme }) {
       {/* Messages */}
       <div 
         ref={chatRef}
-        className="flex-1 overflow-y-auto px-5 py-4 space-y-3"
-        style={{ height: '480px' }}
+        style={{ 
+          flex: 1,
+          overflowY: 'auto',
+          padding: '16px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          height: '480px'
+        }}
       >
         {messages.map(msg => (
           <div 
             key={msg.id} 
-            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            style={{ animation: 'fadeInUp 0.3s ease' }}
+            style={{ 
+              display: 'flex',
+              justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+              animation: 'fadeInUp 0.3s ease'
+            }}
           >
             <div
-              className="px-4 py-3 rounded-2xl text-sm max-w-[80%]"
-              style={msg.sender === 'user' 
-                ? { 
-                    background: theme.gradient, 
-                    color: '#fff',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                    borderRadius: '18px 18px 4px 18px'
-                  }
-                : { 
-                    background: theme.surface, 
-                    color: theme.textPrimary,
-                    border: `1px solid ${theme.border}`,
-                    borderRadius: '18px 18px 18px 4px'
-                  }
-              }
+              style={{
+                padding: '12px 16px',
+                borderRadius: msg.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                fontSize: '14px',
+                maxWidth: '80%',
+                background: msg.sender === 'user' ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})` : colors.bgSecondary,
+                color: msg.sender === 'user' ? '#000' : colors.text,
+                border: msg.sender === 'user' ? 'none' : `1px solid ${colors.border}`,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+              }}
             >
               {msg.text}
             </div>
@@ -484,21 +494,25 @@ function ChatTab({ theme }: { theme: Theme }) {
         ))}
         
         {isTyping && (
-          <div className="flex justify-start" style={{ animation: 'fadeIn 0.3s ease' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-start', animation: 'fadeIn 0.3s ease' }}>
             <div 
-              className="px-4 py-3 rounded-2xl flex gap-1"
               style={{ 
-                background: theme.surface,
-                border: `1px solid ${theme.border}`,
-                borderRadius: '18px 18px 18px 4px'
+                padding: '12px 16px',
+                borderRadius: '18px 18px 18px 4px',
+                display: 'flex',
+                gap: '4px',
+                background: colors.bgSecondary,
+                border: `1px solid ${colors.border}`
               }}
             >
               {[0, 0.2, 0.4].map((delay, i) => (
                 <span
                   key={i}
-                  className="w-2 h-2 rounded-full"
                   style={{ 
-                    background: theme.textMuted,
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: colors.textMuted,
                     animation: `bounce 1s infinite ${delay}s`
                   }}
                 />
@@ -510,35 +524,49 @@ function ChatTab({ theme }: { theme: Theme }) {
 
       {/* Input */}
       <div 
-        className="px-5 py-4 border-t glass"
-        style={{ borderColor: theme.border }}
+        className="glass"
+        style={{ 
+          padding: '16px 20px',
+          borderTop: `1px solid ${colors.border}`
+        }}
       >
-        <div className="flex gap-2 mb-3 overflow-x-auto">
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', overflowX: 'auto' }}>
           {quickReplies.map(q => (
             <button
               key={q}
               onClick={() => setInput(q)}
-              className="text-xs px-3 py-1.5 rounded-full whitespace-nowrap font-medium transition-all"
-              style={{ 
-                background: theme.surface, 
-                color: theme.textSecondary, 
-                border: `1px solid ${theme.border}`
+              style={{
+                fontSize: '12px',
+                padding: '6px 12px',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+                fontWeight: 500,
+                background: colors.bgSecondary,
+                color: colors.textSecondary,
+                border: `1px solid ${colors.border}`
               }}
             >
               {q}
             </button>
           ))}
         </div>
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: '8px' }}>
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && send()}
             placeholder="Xabar yozing..."
-            className="input flex-1"
+            className="input"
+            style={{ flex: 1 }}
           />
-          <button onClick={send} className="btn btn-primary px-5">
+          <button 
+            onClick={send} 
+            className="btn-primary"
+            style={{ padding: '0 20px' }}
+          >
             ➤
           </button>
         </div>
@@ -548,7 +576,7 @@ function ChatTab({ theme }: { theme: Theme }) {
 }
 
 // ============ TRADE-IN TAB ============
-function TradeInTab({ theme }: { theme: Theme }) {
+function TradeInTab() {
   const [state, setState] = useState<'upload' | 'loading' | 'result'>('upload');
 
   const startAnalysis = () => {
@@ -557,46 +585,34 @@ function TradeInTab({ theme }: { theme: Theme }) {
   };
 
   return (
-    <div className="px-5 animate-fade-in-up">
-      <h2 
-        className="mb-2"
-        style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
-      >
+    <div style={{ padding: '0 20px', animation: 'fadeInUp 0.4s ease' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', letterSpacing: '-0.01em', color: colors.text }}>
         Trade-In
       </h2>
-      <p 
-        className="mb-6"
-        style={{ color: theme.textMuted, fontSize: '14px' }}
-      >
+      <p style={{ fontSize: '14px', marginBottom: '24px', color: colors.textMuted }}>
         Skrinshot yuklang — AI 5 soniyada baholaydi
       </p>
 
       {state === 'upload' && (
         <div
           onClick={startAnalysis}
-          className="card p-8 text-center cursor-pointer"
+          className="card"
           style={{ 
+            padding: '32px',
+            textAlign: 'center',
+            cursor: 'pointer',
             boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-            border: `2px dashed ${theme.border}`
+            border: `2px dashed ${colors.border}`
           }}
         >
-          <div className="text-5xl mb-4 animate-float">📸</div>
-          <div 
-            className="text-sm font-semibold mb-1"
-            style={{ color: theme.textPrimary }}
-          >
+          <div style={{ fontSize: '56px', marginBottom: '16px', animation: 'float 3s ease-in-out infinite' }}>📸</div>
+          <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: colors.text }}>
             Skrinshot yuklang
           </div>
-          <div 
-            className="text-xs"
-            style={{ color: theme.textMuted }}
-          >
+          <div style={{ fontSize: '12px', color: colors.textMuted }}>
             Battery Health sahifasi
           </div>
-          <div 
-            className="text-xs mt-4 font-medium"
-            style={{ color: theme.accent }}
-          >
+          <div style={{ fontSize: '12px', marginTop: '16px', fontWeight: 500, color: colors.accent }}>
             ⚡ 5 soniyada natija
           </div>
         </div>
@@ -604,17 +620,25 @@ function TradeInTab({ theme }: { theme: Theme }) {
 
       {state === 'loading' && (
         <div 
-          className="card p-8 text-center"
-          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
+          className="card"
+          style={{ 
+            padding: '32px',
+            textAlign: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+          }}
         >
           <div 
-            className="w-12 h-12 mx-auto mb-4 rounded-full border-4 border-t-transparent animate-spin"
-            style={{ borderColor: theme.accent, borderTopColor: 'transparent' }}
+            style={{
+              width: '48px',
+              height: '48px',
+              margin: '0 auto 16px',
+              borderRadius: '50%',
+              border: `4px solid ${colors.accent}`,
+              borderTopColor: 'transparent',
+              animation: 'spin 1s linear infinite'
+            }}
           />
-          <div 
-            className="text-sm font-medium"
-            style={{ color: theme.accent }}
-          >
+          <div style={{ fontSize: '14px', fontWeight: 500, color: colors.accent }}>
             AI tahlil qilmoqda...
           </div>
         </div>
@@ -622,52 +646,52 @@ function TradeInTab({ theme }: { theme: Theme }) {
 
       {state === 'result' && (
         <div 
-          className="card p-5"
+          className="card"
           style={{ 
+            padding: '20px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
             animation: 'scaleIn 0.3s ease'
           }}
         >
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xl">✅</span>
-            <span 
-              className="text-sm font-semibold"
-              style={{ color: theme.textPrimary }}
-            >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>✅</span>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: colors.text }}>
               Tahlil yakunlandi
             </span>
           </div>
-          <div className="space-y-3 text-sm">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
             {[
-              ['Model:', 'iPhone 11 · 128GB', theme.textPrimary],
-              ['Batareya:', '83%', theme.accent],
-              ['Bozor narxi:', '$260', theme.textPrimary],
+              ['Model:', 'iPhone 11 · 128GB', colors.text],
+              ['Batareya:', '83%', colors.accent],
+              ['Bozor narxi:', '$260', colors.text],
             ].map(([label, val, color], i) => (
               <div 
                 key={i}
-                className="flex justify-between py-2 border-b"
-                style={{ borderColor: theme.border }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 0',
+                  borderBottom: i < 2 ? `1px solid ${colors.border}` : 'none'
+                }}
               >
-                <span style={{ color: theme.textMuted }}>{label}</span>
-                <span className="font-semibold" style={{ color }}>{val}</span>
+                <span style={{ color: colors.textMuted }}>{label}</span>
+                <span style={{ fontWeight: 600, color }}>{val}</span>
               </div>
             ))}
-            <div className="flex justify-between pt-3">
-              <span 
-                className="font-semibold"
-                style={{ color: theme.accent }}
-              >
-                Taklif:
-              </span>
-              <span 
-                className="text-2xl font-bold"
-                style={{ color: theme.accent }}
-              >
-                $210
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px' }}>
+              <span style={{ fontWeight: 600, color: colors.accent }}>Taklif:</span>
+              <span style={{ fontSize: '24px', fontWeight: 700, color: colors.accent }}>$210</span>
             </div>
           </div>
-          <button className="btn btn-primary w-full py-3 mt-4 text-sm">
+          <button 
+            className="btn-primary"
+            style={{ 
+              width: '100%',
+              padding: '12px',
+              marginTop: '16px',
+              fontSize: '14px'
+            }}
+          >
             💬 AI bilan gaplashish
           </button>
         </div>
@@ -677,7 +701,7 @@ function TradeInTab({ theme }: { theme: Theme }) {
 }
 
 // ============ QR TAB ============
-function QRTab({ theme }: { theme: Theme }) {
+function QRTab() {
   const [time, setTime] = useState(90 * 60);
 
   useEffect(() => {
@@ -690,107 +714,87 @@ function QRTab({ theme }: { theme: Theme }) {
   const s = String(time % 60).padStart(2, '0');
 
   return (
-    <div className="px-5 animate-fade-in-up">
-      <h2 
-        className="mb-2"
-        style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
-      >
+    <div style={{ padding: '0 20px', animation: 'fadeInUp 0.4s ease' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px', letterSpacing: '-0.01em', color: colors.text }}>
         VIP Bron
       </h2>
-      <p 
-        className="mb-6"
-        style={{ color: theme.textMuted, fontSize: '14px' }}
-      >
+      <p style={{ fontSize: '14px', marginBottom: '24px', color: colors.textMuted }}>
         Anti-Vozdux: vaqt tugasa, boshqaga sotiladi
       </p>
 
       <div 
-        className="card p-6 text-center"
+        className="card"
         style={{ 
-          boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 40px ' + theme.accent + '15'
+          padding: '24px',
+          textAlign: 'center',
+          boxShadow: `0 2px 8px rgba(0,0,0,0.3), 0 0 40px ${colors.accent}15`
         }}
       >
         <div 
-          className="text-4xl font-bold mb-2 tabular-nums"
-          style={{ color: theme.accent }}
+          style={{ 
+            fontSize: '40px',
+            fontWeight: 700,
+            marginBottom: '8px',
+            color: colors.accent,
+            fontVariantNumeric: 'tabular-nums'
+          }}
         >
           {h}:{m}:{s}
         </div>
-        <div 
-          className="text-xs mb-6"
-          style={{ color: theme.textMuted }}
-        >
+        <div style={{ fontSize: '12px', marginBottom: '24px', color: colors.textMuted }}>
           Qolgan vaqt
         </div>
 
-        <div 
-          className="text-sm font-semibold mb-2"
-          style={{ color: theme.textPrimary }}
-        >
+        <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: colors.text }}>
           iPhone 13 Pro · 128GB
         </div>
         <div 
-          className="text-xs mb-6 font-mono"
-          style={{ color: theme.accent }}
+          style={{ 
+            fontSize: '12px',
+            marginBottom: '24px',
+            fontFamily: 'monospace',
+            color: colors.accent
+          }}
         >
           QR-A7F3-D9E1-B42C
         </div>
 
         <div 
-          className="flex justify-between text-sm pt-4 border-t"
-          style={{ borderColor: theme.border }}
+          style={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: '14px',
+            paddingTop: '16px',
+            borderTop: `1px solid ${colors.border}`
+          }}
         >
           <div>
-            <div 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
-              Xaridor
-            </div>
-            <div 
-              className="font-semibold"
-              style={{ color: theme.textPrimary }}
-            >
-              Jasur T.
-            </div>
+            <div style={{ fontSize: '12px', color: colors.textMuted }}>Xaridor</div>
+            <div style={{ fontWeight: 600, color: colors.text }}>Jasur T.</div>
           </div>
-          <div className="text-right">
-            <div 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
-              Narx
-            </div>
-            <div 
-              className="font-bold"
-              style={{ color: theme.accent }}
-            >
-              $615
-            </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '12px', color: colors.textMuted }}>Narx</div>
+            <div style={{ fontWeight: 700, color: colors.accent }}>$615</div>
           </div>
         </div>
       </div>
 
       <div 
-        className="card p-4 mt-4"
+        className="card"
         style={{ 
-          borderColor: `${theme.warning}40`,
+          padding: '16px',
+          marginTop: '16px',
+          borderColor: `${colors.warning}40`,
           boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
         }}
       >
-        <div className="flex items-start gap-2">
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
           <span>⚠️</span>
           <div>
-            <div 
-              className="text-xs font-semibold mb-1"
-              style={{ color: theme.warning }}
-            >
+            <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px', color: colors.warning }}>
               Eslatma
             </div>
-            <div 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
+            <div style={{ fontSize: '12px', color: colors.textMuted }}>
               90 daqiqa ichida yetib keling
             </div>
           </div>
@@ -801,60 +805,57 @@ function QRTab({ theme }: { theme: Theme }) {
 }
 
 // ============ LOYALTY TAB ============
-function LoyaltyTab({ theme }: { theme: Theme }) {
+function LoyaltyTab() {
   const points = 1240;
   const progress = (points / 2000) * 100;
 
   return (
-    <div className="px-5 animate-fade-in-up">
-      <h2 
-        className="mb-6"
-        style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
-      >
+    <div style={{ padding: '0 20px', animation: 'fadeInUp 0.4s ease' }}>
+      <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '24px', letterSpacing: '-0.01em', color: colors.text }}>
         Bonus
       </h2>
 
       <div 
-        className="card p-6 mb-4"
+        className="card"
         style={{ 
-          boxShadow: '0 2px 8px rgba(0,0,0,0.3), 0 0 40px ' + theme.accent + '10'
+          padding: '24px',
+          marginBottom: '16px',
+          boxShadow: `0 2px 8px rgba(0,0,0,0.3), 0 0 40px ${colors.accent}10`
         }}
       >
-        <div 
-          className="text-xs mb-2"
-          style={{ color: theme.textMuted }}
-        >
+        <div style={{ fontSize: '12px', marginBottom: '8px', color: colors.textMuted }}>
           Joriy bonuslar
         </div>
-        <div 
-          className="text-3xl font-bold mb-4"
-          style={{ color: theme.accent }}
-        >
+        <div style={{ fontSize: '32px', fontWeight: 700, marginBottom: '16px', color: colors.accent }}>
           {points.toLocaleString()}
         </div>
         
         <div 
-          className="h-2 rounded-full overflow-hidden mb-2"
-          style={{ background: theme.border }}
+          style={{ 
+            height: '8px',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            marginBottom: '8px',
+            background: colors.border
+          }}
         >
           <div 
-            className="h-full rounded-full transition-all duration-1000"
             style={{ 
-              width: `${progress}%`, 
-              background: theme.gradient,
-              boxShadow: `0 0 10px ${theme.accent}50`
+              height: '100%',
+              borderRadius: '4px',
+              transition: 'width 1s ease',
+              width: `${progress}%`,
+              background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})`,
+              boxShadow: `0 0 10px ${colors.accent}50`
             }}
           />
         </div>
-        <div 
-          className="text-xs"
-          style={{ color: theme.textMuted }}
-        >
+        <div style={{ fontSize: '12px', color: colors.textMuted }}>
           Gold gacha 760 ball
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
         {[
           { emoji: '🎫', name: "5,000 so'm", points: 500 },
           { emoji: '🔌', name: 'Adapter', points: 300 },
@@ -863,23 +864,19 @@ function LoyaltyTab({ theme }: { theme: Theme }) {
         ].map((r, i) => (
           <div 
             key={i} 
-            className="card p-4 text-center"
+            className="card"
             style={{ 
+              padding: '16px',
+              textAlign: 'center',
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
               animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
-            <div className="text-2xl mb-2">{r.emoji}</div>
-            <div 
-              className="text-xs font-medium mb-1"
-              style={{ color: theme.textPrimary }}
-            >
+            <div style={{ fontSize: '24px', marginBottom: '8px' }}>{r.emoji}</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, marginBottom: '4px', color: colors.text }}>
               {r.name}
             </div>
-            <div 
-              className="text-xs font-semibold"
-              style={{ color: theme.accent }}
-            >
+            <div style={{ fontSize: '12px', fontWeight: 600, color: colors.accent }}>
               {r.points} ball
             </div>
           </div>
@@ -890,10 +887,9 @@ function LoyaltyTab({ theme }: { theme: Theme }) {
 }
 
 // ============ BOTTOM NAV ============
-function BottomNav({ activeTab, setActiveTab, theme }: { 
+function BottomNav({ activeTab, setActiveTab }: { 
   activeTab: TabType; 
-  setActiveTab: (t: TabType) => void; 
-  theme: Theme 
+  setActiveTab: (t: TabType) => void;
 }) {
   const tabs = [
     { id: 'vitrina' as TabType, icon: '🏬', label: 'Vitrina' },
@@ -905,9 +901,16 @@ function BottomNav({ activeTab, setActiveTab, theme }: {
 
   return (
     <div 
-      className="absolute bottom-0 left-0 right-0 flex justify-around py-3 pb-6 border-t glass"
+      className="glass"
       style={{ 
-        borderColor: theme.border,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'space-around',
+        padding: '12px 0 24px',
+        borderTop: `1px solid ${colors.border}`,
         boxShadow: '0 -2px 8px rgba(0,0,0,0.3)'
       }}
     >
@@ -915,11 +918,21 @@ function BottomNav({ activeTab, setActiveTab, theme }: {
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
-          className="flex flex-col items-center gap-1 px-3 py-1 transition-all"
-          style={{ color: activeTab === tab.id ? theme.accent : theme.textMuted }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '4px 12px',
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            color: activeTab === tab.id ? colors.accent : colors.textMuted
+          }}
         >
-          <div className="text-lg">{tab.icon}</div>
-          <div className="text-[10px] font-medium">{tab.label}</div>
+          <div style={{ fontSize: '18px' }}>{tab.icon}</div>
+          <div style={{ fontSize: '10px', fontWeight: 500 }}>{tab.label}</div>
         </button>
       ))}
     </div>
@@ -927,68 +940,54 @@ function BottomNav({ activeTab, setActiveTab, theme }: {
 }
 
 // ============ ADMIN VIEW ============
-function AdminView({ adminTab, setAdminTab, theme }: { 
+function AdminView({ adminTab, setAdminTab }: { 
   adminTab: AdminTabType; 
-  setAdminTab: (t: AdminTabType) => void; 
-  theme: Theme 
+  setAdminTab: (t: AdminTabType) => void;
 }) {
   return (
-    <div 
-      className="max-w-6xl mx-auto px-4 md:px-6 animate-fade-in"
-    >
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', animation: 'fadeIn 0.3s ease' }}>
       <div 
-        className="card p-6 mb-6"
+        className="card"
         style={{ 
+          padding: '24px',
+          marginBottom: '24px',
           boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
           animation: 'fadeInUp 0.6s ease'
         }}
       >
-        <div className="flex items-center justify-between">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <h2 
-              className="mb-1"
-              style={{ color: theme.textPrimary, fontSize: '24px', fontWeight: 700 }}
-            >
+            <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '4px', letterSpacing: '-0.01em', color: colors.text }}>
               Sardor Tech
             </h2>
-            <p 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
+            <p style={{ fontSize: '12px', color: colors.textMuted }}>
               Malika bozori · B-qator 45 · $49/oy
             </p>
           </div>
-          <div className="text-right">
-            <div 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
-              Bugun
-            </div>
-            <div 
-              className="text-2xl font-bold"
-              style={{ color: theme.accent }}
-            >
-              $3,240
-            </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '12px', color: colors.textMuted }}>Bugun</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: colors.accent }}>$3,240</div>
           </div>
         </div>
       </div>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', overflowX: 'auto', paddingBottom: '8px' }}>
         {(['dashboard', 'crm', 'voice', 'inventory', 'analytics', 'broadcast'] as AdminTabType[]).map(tab => (
           <button
             key={tab}
             onClick={() => setAdminTab(tab)}
-            className="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all"
-            style={adminTab === tab ? { 
-              background: theme.gradient, 
-              color: '#fff',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-            } : { 
-              background: theme.surface, 
-              color: theme.textMuted, 
-              border: `1px solid ${theme.border}`
+            style={{
+              padding: '8px 16px',
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              whiteSpace: 'nowrap',
+              background: adminTab === tab ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})` : colors.bgSecondary,
+              color: adminTab === tab ? '#000' : colors.textMuted,
+              boxShadow: adminTab === tab ? '0 2px 8px rgba(0,0,0,0.3)' : 'none',
+              border: adminTab === tab ? 'none' : `1px solid ${colors.border}`
             }}
           >
             {tab === 'dashboard' && '📊 Dashboard'}
@@ -1001,78 +1000,49 @@ function AdminView({ adminTab, setAdminTab, theme }: {
         ))}
       </div>
 
-      {adminTab === 'dashboard' && <DashboardTab theme={theme} />}
-      {adminTab === 'crm' && <CRMTab theme={theme} />}
-      {adminTab === 'voice' && <VoiceTab theme={theme} />}
-      {adminTab === 'inventory' && <InventoryTab theme={theme} />}
-      {adminTab === 'analytics' && <AnalyticsTab theme={theme} />}
-      {adminTab === 'broadcast' && <BroadcastTab theme={theme} />}
+      {adminTab === 'dashboard' && <DashboardTab />}
+      {adminTab === 'crm' && <CRMTab />}
+      {adminTab === 'voice' && <VoiceTab />}
+      {adminTab === 'inventory' && <InventoryTab />}
+      {adminTab === 'analytics' && <AnalyticsTab />}
+      {adminTab === 'broadcast' && <BroadcastTab />}
     </div>
   );
 }
 
 // ============ DASHBOARD TAB ============
-function DashboardTab({ theme }: { theme: Theme }) {
+function DashboardTab() {
   return (
-    <div className="animate-fade-in-up">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div style={{ animation: 'fadeInUp 0.4s ease' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
         {[
-          { label: 'Foyda', value: '$780', change: '↑ 24%', color: theme.accent },
-          { label: 'Sotilgan', value: '12', sub: 'ta', color: theme.textPrimary },
-          { label: 'Bronlar', value: '4', sub: 'aktiv', color: theme.textPrimary },
-          { label: 'Mijozlar', value: '8', sub: 'yangi', color: theme.textPrimary },
+          { label: 'Foyda', value: '$780', change: '↑ 24%', color: colors.accent },
+          { label: 'Sotilgan', value: '12', sub: 'ta', color: colors.text },
+          { label: 'Bronlar', value: '4', sub: 'aktiv', color: colors.text },
+          { label: 'Mijozlar', value: '8', sub: 'yangi', color: colors.text },
         ].map((stat, i) => (
           <div 
             key={i} 
-            className="card p-4"
+            className="card"
             style={{ 
+              padding: '16px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
               animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
-            <div 
-              className="text-xs mb-1"
-              style={{ color: theme.textMuted }}
-            >
-              {stat.label}
-            </div>
-            <div 
-              className="text-2xl font-bold"
-              style={{ color: stat.color }}
-            >
-              {stat.value}
-            </div>
-            {stat.change && (
-              <div 
-                className="text-xs mt-1"
-                style={{ color: theme.textMuted }}
-              >
-                {stat.change}
-              </div>
-            )}
-            {stat.sub && (
-              <div 
-                className="text-xs mt-1"
-                style={{ color: theme.textMuted }}
-              >
-                {stat.sub}
-              </div>
-            )}
+            <div style={{ fontSize: '12px', marginBottom: '4px', color: colors.textMuted }}>{stat.label}</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: stat.color }}>{stat.value}</div>
+            {stat.change && <div style={{ fontSize: '12px', marginTop: '4px', color: colors.textMuted }}>{stat.change}</div>}
+            {stat.sub && <div style={{ fontSize: '12px', marginTop: '4px', color: colors.textMuted }}>{stat.sub}</div>}
           </div>
         ))}
       </div>
 
-      <div 
-        className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-      >
-        <h3 
-          className="text-sm font-semibold mb-4"
-          style={{ color: theme.textPrimary }}
-        >
+      <div className="card" style={{ padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px', color: colors.text }}>
           So'nggi hodisalar
         </h3>
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
             { icon: '💰', title: 'Yangi sotuv', desc: 'iPhone 13 Pro - $620', time: '2 daqiqa' },
             { icon: '🎟️', title: 'Bron tasdiqlandi', desc: 'Jasur T. - Galaxy S24', time: '15 daqiqa' },
@@ -1080,30 +1050,21 @@ function DashboardTab({ theme }: { theme: Theme }) {
           ].map((n, i) => (
             <div 
               key={i} 
-              className="flex items-center gap-3 p-3 rounded-xl"
-              style={{ background: theme.surfaceHover }}
+              style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px',
+                borderRadius: '12px',
+                background: colors.bgTertiary
+              }}
             >
-              <span className="text-lg">{n.icon}</span>
-              <div className="flex-1">
-                <div 
-                  className="text-xs font-semibold"
-                  style={{ color: theme.textPrimary }}
-                >
-                  {n.title}
-                </div>
-                <div 
-                  className="text-xs"
-                  style={{ color: theme.textMuted }}
-                >
-                  {n.desc}
-                </div>
+              <span style={{ fontSize: '18px' }}>{n.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: colors.text }}>{n.title}</div>
+                <div style={{ fontSize: '12px', color: colors.textMuted }}>{n.desc}</div>
               </div>
-              <div 
-                className="text-xs"
-                style={{ color: theme.textMuted }}
-              >
-                {n.time}
-              </div>
+              <div style={{ fontSize: '12px', color: colors.textMuted }}>{n.time}</div>
             </div>
           ))}
         </div>
@@ -1113,87 +1074,70 @@ function DashboardTab({ theme }: { theme: Theme }) {
 }
 
 // ============ CRM TAB ============
-function CRMTab({ theme }: { theme: Theme }) {
-  const tierColors: Record<string, string> = { 
-    gold: '#d4af37', 
-    silver: '#94a3b8', 
-    bronze: '#cd7f32' 
-  };
+function CRMTab() {
+  const tierColors: Record<string, string> = { gold: '#d4af37', silver: '#94a3b8', bronze: '#cd7f32' };
 
   return (
-    <div className="animate-fade-in-up">
-      <div 
-        className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h3 
-            className="text-sm font-semibold"
-            style={{ color: theme.textPrimary }}
-          >
-            Mijozlar bazasi
-          </h3>
+    <div style={{ animation: 'fadeInUp 0.4s ease' }}>
+      <div className="card" style={{ padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, color: colors.text }}>Mijozlar bazasi</h3>
           <span 
             className="badge badge-primary"
-            style={{ 
-              background: `${theme.accent}20`, 
-              color: theme.accent,
-              border: `1px solid ${theme.accent}40`
-            }}
+            style={{ background: `${colors.accent}20`, color: colors.accent, border: `1px solid ${colors.accent}40` }}
           >
             {customers.length} mijoz
           </span>
         </div>
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {customers.map((c, i) => (
             <div 
               key={c.id} 
-              className="flex items-center gap-3 p-3 rounded-xl"
               style={{ 
-                background: theme.surfaceHover,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px',
+                borderRadius: '12px',
+                background: colors.bgTertiary,
                 animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
               }}
             >
               <div 
-                className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{ 
-                  background: `${tierColors[c.tier]}20`, 
-                  color: tierColors[c.tier] 
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  background: `${tierColors[c.tier]}20`,
+                  color: tierColors[c.tier]
                 }}
               >
                 {c.name.charAt(0)}
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: colors.text }}>{c.name}</span>
                   <span 
-                    className="text-xs font-semibold"
-                    style={{ color: theme.textPrimary }}
-                  >
-                    {c.name}
-                  </span>
-                  <span 
-                    className="text-[9px] px-1.5 py-0.5 rounded-full font-medium"
                     style={{ 
-                      background: `${tierColors[c.tier]}20`, 
-                      color: tierColors[c.tier] 
+                      fontSize: '9px',
+                      padding: '2px 6px',
+                      borderRadius: '10px',
+                      fontWeight: 500,
+                      background: `${tierColors[c.tier]}20`,
+                      color: tierColors[c.tier]
                     }}
                   >
                     {c.tier.toUpperCase()}
                   </span>
                 </div>
-                <div 
-                  className="text-xs"
-                  style={{ color: theme.textMuted }}
-                >
-                  {c.points} ball · {c.visits} tashrif
-                </div>
+                <div style={{ fontSize: '12px', color: colors.textMuted }}>{c.points} ball · {c.visits} tashrif</div>
               </div>
-              <div 
-                className="text-sm font-bold"
-                style={{ color: theme.accent }}
-              >
-                ${c.spent}
-              </div>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: colors.accent }}>${c.spent}</div>
             </div>
           ))}
         </div>
@@ -1203,78 +1147,57 @@ function CRMTab({ theme }: { theme: Theme }) {
 }
 
 // ============ VOICE TAB ============
-function VoiceTab({ theme }: { theme: Theme }) {
+function VoiceTab() {
   const [state, setState] = useState<'idle' | 'recording' | 'done'>('idle');
 
   return (
-    <div className="animate-fade-in-up">
-      <div 
-        className="card p-6 text-center"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-      >
-        <h3 
-          className="text-sm font-semibold mb-2"
-          style={{ color: theme.textPrimary }}
-        >
-          AI Voice Agent
-        </h3>
-        <p 
-          className="text-xs mb-6"
-          style={{ color: theme.textMuted }}
-        >
+    <div style={{ animation: 'fadeInUp 0.4s ease' }}>
+      <div className="card" style={{ padding: '24px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: colors.text }}>AI Voice Agent</h3>
+        <p style={{ fontSize: '12px', marginBottom: '24px', color: colors.textMuted }}>
           Telefon qo'ng'iroqlariga AI javob beradi
         </p>
 
         <button
-          onClick={() => { 
-            setState('recording'); 
-            setTimeout(() => setState('done'), 2000); 
-          }}
-          className="w-16 h-16 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 transition-all"
-          style={{ 
-            background: state === 'recording' ? theme.danger : theme.gradient,
+          onClick={() => { setState('recording'); setTimeout(() => setState('done'), 2000); }}
+          style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            margin: '0 auto 16px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            background: state === 'recording' ? colors.danger : `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})`,
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.4), 0 0 20px ' + (state === 'recording' ? theme.danger : theme.accent) + '40'
+            boxShadow: `0 4px 12px rgba(0,0,0,0.4), 0 0 20px ${state === 'recording' ? colors.danger : colors.accent}40`
           }}
         >
           {state === 'recording' ? '🔴' : '🎤'}
         </button>
 
         {state === 'recording' && (
-          <div 
-            className="text-xs"
-            style={{ color: theme.textMuted }}
-          >
-            Qo'ng'iroq qabul qilinmoqda...
-          </div>
+          <div style={{ fontSize: '12px', color: colors.textMuted }}>Qo'ng'iroq qabul qilinmoqda...</div>
         )}
 
         {state === 'done' && (
           <div 
-            className="mt-4 p-4 rounded-xl text-left"
             style={{ 
-              background: theme.surfaceHover,
+              marginTop: '16px',
+              padding: '16px',
+              borderRadius: '12px',
+              textAlign: 'left',
+              background: colors.bgTertiary,
               animation: 'scaleIn 0.3s ease'
             }}
           >
-            <div 
-              className="text-xs mb-2 font-medium"
-              style={{ color: theme.accent }}
-            >
-              ✅ Transkripsiya:
-            </div>
-            <div 
-              className="text-sm italic mb-3"
-              style={{ color: theme.textSecondary }}
-            >
-              "iPhone 13 Pro bormi?"
-            </div>
-            <div 
-              className="text-xs font-medium"
-              style={{ color: theme.accent }}
-            >
-              🧠 Lead yaratildi → CRM ga qo'shildi
-            </div>
+            <div style={{ fontSize: '12px', marginBottom: '8px', fontWeight: 500, color: colors.accent }}>✅ Transkripsiya:</div>
+            <div style={{ fontSize: '14px', fontStyle: 'italic', marginBottom: '12px', color: colors.textSecondary }}>"iPhone 13 Pro bormi?"</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: colors.accent }}>🧠 Lead yaratildi → CRM ga qo'shildi</div>
           </div>
         )}
       </div>
@@ -1283,56 +1206,36 @@ function VoiceTab({ theme }: { theme: Theme }) {
 }
 
 // ============ INVENTORY TAB ============
-function InventoryTab({ theme }: { theme: Theme }) {
+function InventoryTab() {
   return (
-    <div className="animate-fade-in-up">
-      <div 
-        className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-      >
-        <h3 
-          className="text-sm font-semibold mb-4"
-          style={{ color: theme.textPrimary }}
-        >
-          AI Talab Bashorati
-        </h3>
-        <div className="space-y-3">
+    <div style={{ animation: 'fadeInUp 0.4s ease' }}>
+      <div className="card" style={{ padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px', color: colors.text }}>AI Talab Bashorati</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
             { name: 'iPhone 13 Pro', current: 2, needed: 5, trend: '↑ 40%' },
             { name: 'Galaxy S24', current: 4, needed: 4, trend: '→ stabil' },
           ].map((item, i) => (
             <div 
               key={i} 
-              className="flex items-center justify-between p-3 rounded-xl"
-              style={{ background: theme.surfaceHover }}
+              style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '12px',
+                borderRadius: '12px',
+                background: colors.bgTertiary
+              }}
             >
               <div>
-                <div 
-                  className="text-xs font-semibold"
-                  style={{ color: theme.textPrimary }}
-                >
-                  {item.name}
-                </div>
-                <div 
-                  className="text-xs"
-                  style={{ color: theme.textMuted }}
-                >
-                  Hozir: {item.current} ta
-                </div>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: colors.text }}>{item.name}</div>
+                <div style={{ fontSize: '12px', color: colors.textMuted }}>Hozir: {item.current} ta</div>
               </div>
-              <div className="text-right">
-                <div 
-                  className="text-xs font-bold"
-                  style={{ color: item.current < item.needed ? theme.warning : theme.textMuted }}
-                >
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: item.current < item.needed ? colors.warning : colors.textMuted }}>
                   {item.current < item.needed ? `${item.needed} kerak` : 'Yetarli'}
                 </div>
-                <div 
-                  className="text-xs"
-                  style={{ color: theme.textMuted }}
-                >
-                  {item.trend}
-                </div>
+                <div style={{ fontSize: '12px', color: colors.textMuted }}>{item.trend}</div>
               </div>
             </div>
           ))}
@@ -1343,54 +1246,35 @@ function InventoryTab({ theme }: { theme: Theme }) {
 }
 
 // ============ ANALYTICS TAB ============
-function AnalyticsTab({ theme }: { theme: Theme }) {
+function AnalyticsTab() {
   const max = Math.max(...weeklyData.map(d => d.value));
 
   return (
-    <div className="animate-fade-in-up">
-      <div 
-        className="card p-5 mb-4"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-      >
-        <h3 
-          className="text-sm font-semibold mb-4"
-          style={{ color: theme.textPrimary }}
-        >
-          Haftalik daromad
-        </h3>
-        <div className="flex items-end justify-between gap-2 h-32">
+    <div style={{ animation: 'fadeInUp 0.4s ease' }}>
+      <div className="card" style={{ padding: '20px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px', color: colors.text }}>Haftalik daromad</h3>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px', height: '128px' }}>
           {weeklyData.map((d, i) => (
-            <div 
-              key={d.day} 
-              className="flex-1 flex flex-col items-center gap-1"
-            >
+            <div key={d.day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+              <div style={{ fontSize: '9px', color: colors.textMuted }}>${d.value}</div>
               <div 
-                className="text-[9px]"
-                style={{ color: theme.textMuted }}
-              >
-                ${d.value}
-              </div>
-              <div 
-                className="w-full rounded-t-lg transition-all"
                 style={{ 
-                  height: `${(d.value / max) * 100}%`, 
-                  background: theme.gradient,
+                  width: '100%',
+                  borderRadius: '4px 4px 0 0',
+                  transition: 'height 0.5s ease',
+                  height: `${(d.value / max) * 100}%`,
+                  background: `linear-gradient(135deg, ${colors.accent}, ${colors.accentLight})`,
                   animation: `fadeInUp 0.4s ease ${i * 0.05}s both`,
-                  boxShadow: `0 0 10px ${theme.accent}30`
+                  boxShadow: `0 0 10px ${colors.accent}30`
                 }}
               />
-              <div 
-                className="text-xs"
-                style={{ color: theme.textMuted }}
-              >
-                {d.day}
-              </div>
+              <div style={{ fontSize: '12px', color: colors.textMuted }}>{d.day}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
         {[
           { label: "O'rtacha chek", value: '$270' },
           { label: 'Konversiya', value: '68%' },
@@ -1399,24 +1283,16 @@ function AnalyticsTab({ theme }: { theme: Theme }) {
         ].map((stat, i) => (
           <div 
             key={i} 
-            className="card p-4 text-center"
+            className="card"
             style={{ 
+              padding: '16px',
+              textAlign: 'center',
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
               animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
-            <div 
-              className="text-lg font-bold"
-              style={{ color: theme.accent }}
-            >
-              {stat.value}
-            </div>
-            <div 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
-              {stat.label}
-            </div>
+            <div style={{ fontSize: '18px', fontWeight: 700, color: colors.accent }}>{stat.value}</div>
+            <div style={{ fontSize: '12px', color: colors.textMuted }}>{stat.label}</div>
           </div>
         ))}
       </div>
@@ -1425,23 +1301,15 @@ function AnalyticsTab({ theme }: { theme: Theme }) {
 }
 
 // ============ BROADCAST TAB ============
-function BroadcastTab({ theme }: { theme: Theme }) {
+function BroadcastTab() {
   const [sent, setSent] = useState(false);
 
   return (
-    <div className="animate-fade-in-up">
-      <div 
-        className="card p-5"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
-      >
-        <h3 
-          className="text-sm font-semibold mb-4"
-          style={{ color: theme.textPrimary }}
-        >
-          Broadcast yuborish
-        </h3>
+    <div style={{ animation: 'fadeInUp 0.4s ease' }}>
+      <div className="card" style={{ padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '16px', color: colors.text }}>Broadcast yuborish</h3>
         
-        <div className="space-y-2 mb-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
           {[
             { name: 'Telegram kanal', count: 1240 },
             { name: 'SMS', count: 89 },
@@ -1449,22 +1317,19 @@ function BroadcastTab({ theme }: { theme: Theme }) {
           ].map((ch, i) => (
             <div 
               key={i} 
-              className="flex items-center justify-between p-3 rounded-xl"
-              style={{ background: theme.surfaceHover }}
+              style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '12px',
+                borderRadius: '12px',
+                background: colors.bgTertiary
+              }}
             >
-              <span 
-                className="text-xs"
-                style={{ color: theme.textPrimary }}
-              >
-                {ch.name}
-              </span>
+              <span style={{ fontSize: '12px', color: colors.text }}>{ch.name}</span>
               <span 
                 className="badge badge-primary"
-                style={{ 
-                  background: `${theme.accent}20`, 
-                  color: theme.accent,
-                  border: `1px solid ${theme.accent}40`
-                }}
+                style={{ background: `${colors.accent}20`, color: colors.accent, border: `1px solid ${colors.accent}40` }}
               >
                 {ch.count}
               </span>
@@ -1474,7 +1339,8 @@ function BroadcastTab({ theme }: { theme: Theme }) {
 
         <button
           onClick={() => setSent(true)}
-          className="btn btn-primary w-full py-3 text-sm"
+          className="btn-primary"
+          style={{ width: '100%', padding: '12px', fontSize: '14px' }}
         >
           {sent ? '✅ Yuborildi!' : '📤 Yuborish'}
         </button>
@@ -1484,7 +1350,7 @@ function BroadcastTab({ theme }: { theme: Theme }) {
 }
 
 // ============ FEATURES SECTION ============
-function FeaturesSection({ theme }: { theme: Theme }) {
+function FeaturesSection() {
   const features = [
     { icon: '🧠', title: 'AI Sotuvchi', desc: '24/7 narx muzokarasi', tag: 'GPT-4' },
     { icon: '👁️', title: 'Vision Trade-In', desc: '5 soniyada baholash', tag: 'Vision AI' },
@@ -1498,68 +1364,42 @@ function FeaturesSection({ theme }: { theme: Theme }) {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-6 py-20">
-      <div className="text-center mb-16">
-        <h2 
-          className="mb-4"
-          style={{ color: theme.textPrimary, fontSize: '32px', fontWeight: 700 }}
-        >
-          Nima uchun{' '}
-          <span 
-            className="gradient-text"
-            style={{ 
-              background: theme.gradient, 
-              WebkitBackgroundClip: 'text', 
-              WebkitTextFillColor: 'transparent' 
-            }}
-          >
-            TechSeller AI
-          </span>
-          ?
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 24px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+        <h2 style={{ fontSize: '32px', fontWeight: 700, marginBottom: '16px', letterSpacing: '-0.01em', color: colors.text }}>
+          Nima uchun <span className="gradient-text">TechSeller AI</span>?
         </h2>
-        <p 
-          className="text-sm"
-          style={{ color: theme.textMuted, maxWidth: '500px', margin: '0 auto' }}
-        >
+        <p style={{ fontSize: '14px', color: colors.textMuted, maxWidth: '500px', margin: '0 auto' }}>
           O'zbekiston bozorlari uchun birinchi to'liq AI savdo tizimi
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
         {features.map((f, i) => (
           <div
             key={f.title}
-            className="card p-5"
+            className="card"
             style={{ 
+              padding: '20px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
               animation: `fadeInUp 0.4s ease ${i * 0.05}s both`
             }}
           >
-            <div className="flex items-start justify-between mb-3">
-              <span className="text-2xl">{f.icon}</span>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <span style={{ fontSize: '24px' }}>{f.icon}</span>
               <span 
                 className="badge"
                 style={{ 
-                  background: theme.surface, 
-                  color: theme.textMuted, 
-                  border: `1px solid ${theme.border}`,
+                  background: colors.bgSecondary, 
+                  color: colors.textMuted, 
+                  border: `1px solid ${colors.border}`,
                   fontSize: '10px'
                 }}
               >
                 {f.tag}
               </span>
             </div>
-            <h3 
-              className="font-semibold text-sm mb-1"
-              style={{ color: theme.textPrimary }}
-            >
-              {f.title}
-            </h3>
-            <p 
-              className="text-xs"
-              style={{ color: theme.textMuted }}
-            >
-              {f.desc}
-            </p>
+            <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px', color: colors.text }}>{f.title}</h3>
+            <p style={{ fontSize: '12px', color: colors.textMuted }}>{f.desc}</p>
           </div>
         ))}
       </div>
