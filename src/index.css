@@ -241,6 +241,22 @@ body {
   }
 }
 
+.animate-fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease;
+}
+
 /* Animation Classes */
 .animate-fade-in { animation: fadeIn var(--transition-base); }
 .animate-fade-in-up { animation: fadeInUp var(--transition-slow); }

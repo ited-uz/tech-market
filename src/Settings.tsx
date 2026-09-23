@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { Language } from './i18n';
 
 interface SettingsProps {
@@ -24,6 +23,13 @@ export default function Settings({
 }: SettingsProps) {
   if (!isOpen) return null;
 
+  const isDark = theme === 'dark';
+  const bg = isDark ? 'bg-neutral-900' : 'bg-white';
+  const text = isDark ? 'text-white' : 'text-black';
+  const textSec = isDark ? 'text-gray-400' : 'text-gray-600';
+  const surface = isDark ? 'bg-neutral-800' : 'bg-gray-100';
+  const border = isDark ? 'border-neutral-700' : 'border-gray-300';
+
   const languages: { code: Language; name: string; flag: string }[] = [
     { code: 'uz', name: "O'zbek", flag: '🇺🇿' },
     { code: 'en', name: 'English', flag: '🇬🇧' },
@@ -41,93 +47,37 @@ export default function Settings({
       {/* Overlay */}
       <div
         onClick={onClose}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 998,
-          animation: 'fadeIn 0.2s ease',
-        }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[998] animate-fade-in"
       />
 
       {/* Settings Panel */}
       <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          width: '380px',
-          maxWidth: '100%',
-          height: '100vh',
-          background: theme === 'dark' ? '#0a0a0a' : '#ffffff',
-          borderLeft: `1px solid ${theme === 'dark' ? '#1a1a1a' : '#e5e5e5'}`,
-          zIndex: 999,
-          overflowY: 'auto',
-          animation: 'slideInRight 0.3s ease',
-          padding: '24px',
-        }}
+        className={`fixed top-0 right-0 w-96 max-w-full h-screen ${bg} ${text} border-l ${border} z-[999] overflow-y-auto animate-slide-in-right p-6`}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: theme === 'dark' ? '#fff' : '#000' }}>
-            ⚙️ Sozlamalar
-          </h2>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold">⚙️ Sozlamalar</h2>
           <button
             onClick={onClose}
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              border: 'none',
-              background: theme === 'dark' ? '#1a1a1a' : '#f5f5f5',
-              color: theme === 'dark' ? '#fff' : '#000',
-              cursor: 'pointer',
-              fontSize: '18px',
-            }}
+            className={`w-8 h-8 rounded-lg ${surface} ${text} flex items-center justify-center hover:scale-110 transition-transform`}
           >
             ✕
           </button>
         </div>
 
         {/* Theme Section */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: theme === 'dark' ? '#a1a1a1' : '#666' }}>
-            🎨 Mavzu
-          </h3>
-          <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="mb-8">
+          <h3 className={`text-sm font-semibold mb-3 ${textSec}`}>🎨 Mavzu</h3>
+          <div className="flex gap-2">
             <button
               onClick={() => setTheme('light')}
-              style={{
-                flex: 1,
-                padding: '12px',
-                borderRadius: '12px',
-                border: theme === 'light' ? '2px solid #d4af37' : '1px solid #262626',
-                background: '#ffffff',
-                color: '#000',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '14px',
-              }}
+              className={`flex-1 p-3 rounded-xl border-2 ${theme === 'light' ? 'border-yellow-500' : border} bg-white text-black font-semibold hover:scale-105 transition-transform`}
             >
               ☀️ Oq
             </button>
             <button
               onClick={() => setTheme('dark')}
-              style={{
-                flex: 1,
-                padding: '12px',
-                borderRadius: '12px',
-                border: theme === 'dark' ? '2px solid #d4af37' : '1px solid #e5e5e5',
-                background: '#000000',
-                color: '#fff',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '14px',
-              }}
+              className={`flex-1 p-3 rounded-xl border-2 ${theme === 'dark' ? 'border-yellow-500' : border} bg-black text-white font-semibold hover:scale-105 transition-transform`}
             >
               🌙 Qora
             </button>
@@ -135,65 +85,39 @@ export default function Settings({
         </div>
 
         {/* Language Section */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: theme === 'dark' ? '#a1a1a1' : '#666' }}>
-            🌍 Til
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="mb-8">
+          <h3 className={`text-sm font-semibold mb-3 ${textSec}`}>🌍 Til</h3>
+          <div className="flex flex-col gap-2">
             {languages.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => setLanguage(lang.code)}
-                style={{
-                  padding: '12px 16px',
-                  borderRadius: '12px',
-                  border: language === lang.code ? '2px solid #d4af37' : `1px solid ${theme === 'dark' ? '#262626' : '#e5e5e5'}`,
-                  background: theme === 'dark' ? '#0f0f0f' : '#ffffff',
-                  color: theme === 'dark' ? '#fff' : '#000',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  fontSize: '14px',
-                  fontWeight: language === lang.code ? 600 : 400,
-                }}
+                className={`p-3 rounded-xl border-2 ${language === lang.code ? 'border-yellow-500' : border} ${surface} ${text} flex items-center gap-3 hover:scale-105 transition-transform`}
               >
-                <span style={{ fontSize: '20px' }}>{lang.flag}</span>
-                <span>{lang.name}</span>
-                {language === lang.code && <span style={{ marginLeft: 'auto', color: '#d4af37' }}>✓</span>}
+                <span className="text-xl">{lang.flag}</span>
+                <span className="font-semibold">{lang.name}</span>
+                {language === lang.code && <span className="ml-auto text-yellow-500">✓</span>}
               </button>
             ))}
           </div>
         </div>
 
         {/* Design Section */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: theme === 'dark' ? '#a1a1a1' : '#666' }}>
-            ✨ Dizayn
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="mb-8">
+          <h3 className={`text-sm font-semibold mb-3 ${textSec}`}>✨ Dizayn</h3>
+          <div className="flex flex-col gap-2">
             {designs.map((d) => (
               <button
                 key={d.id}
                 onClick={() => setDesign(d.id)}
-                style={{
-                  padding: '16px',
-                  borderRadius: '12px',
-                  border: design === d.id ? '2px solid #d4af37' : `1px solid ${theme === 'dark' ? '#262626' : '#e5e5e5'}`,
-                  background: theme === 'dark' ? '#0f0f0f' : '#ffffff',
-                  color: theme === 'dark' ? '#fff' : '#000',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
+                className={`p-4 rounded-xl border-2 ${design === d.id ? 'border-yellow-500' : border} ${surface} ${text} text-left hover:scale-105 transition-transform`}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '24px' }}>{d.emoji}</span>
-                  <span style={{ fontSize: '14px', fontWeight: 600 }}>{d.name}</span>
-                  {design === d.id && <span style={{ marginLeft: 'auto', color: '#d4af37' }}>✓</span>}
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="text-2xl">{d.emoji}</span>
+                  <span className="font-semibold">{d.name}</span>
+                  {design === d.id && <span className="ml-auto text-yellow-500">✓</span>}
                 </div>
-                <div style={{ fontSize: '12px', color: theme === 'dark' ? '#a1a1a1' : '#666', marginLeft: '36px' }}>
-                  {d.desc}
-                </div>
+                <div className={`text-xs ${textSec} ml-9`}>{d.desc}</div>
               </button>
             ))}
           </div>
